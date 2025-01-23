@@ -20,15 +20,6 @@ class _PlanRouteScreenState extends State<PlanRouteScreen> {
   bool isValidationChecked = false;
 
   @override
-  void initState() {
-    super.initState();
-
-    //TODO: remove this
-    originController.text = 'accra';
-    destinationController.text = 'lagos';
-  }
-
-  @override
   void dispose() {
     originController.dispose();
     destinationController.dispose();
