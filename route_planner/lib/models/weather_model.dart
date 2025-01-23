@@ -1,24 +1,24 @@
 import 'package:route_planner/enums/weather_condition_enum.dart';
 
 class WeatherModel {
-  final WeatherCondition description;
+  final WeatherCondition condition;
   final double temperature;
 
   WeatherModel({
-    required this.description,
+    required this.condition,
     required this.temperature,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     return WeatherModel(
-      description: WeatherCondition.fromString(json['description']),
+      condition: WeatherCondition.fromString(json['description']),
       temperature: json['temperature'].toDouble(),
     );
   }
 
   factory WeatherModel.$default() {
     return WeatherModel(
-      description: WeatherCondition.unknown,
+      condition: WeatherCondition.unknown,
       temperature: 0,
     );
   }

@@ -1,33 +1,30 @@
-import 'package:route_planner/enums/side.dart';
-
 enum Direction {
-  unknown('unknown', Side.unknown),
-  start('start', Side.start),
-  turnSlightLeft('turn-slight-left', Side.left),
-  turnSharpLeft('turn-sharp-left', Side.left),
-  turnLeft('turn-left', Side.left),
-  turnSlightRight('turn-slight-right', Side.right),
-  turnSharpRight('turn-sharp-right', Side.right),
-  keepRight('keep-right', Side.right),
-  keepLeft('keep-left', Side.left),
-  uturnLeft('uturn-left', Side.left),
-  uturnRight('uturn-right', Side.right),
-  turnRight('turn-right', Side.right),
-  straight('straight', Side.straight),
-  rampLeft('ramp-left', Side.left),
-  rampRight('ramp-right', Side.right),
-  merge('merge', Side.straight),
-  forkLeft('fork-left', Side.left),
-  forkRight('fork-right', Side.right),
-  ferry('ferry', Side.straight),
-  ferryTrain('ferry-train', Side.straight),
-  roundaboutLeft('roundabout-left', Side.left),
-  roundaboutRight('roundabout-right', Side.right);
+  unknown('unknown'),
+  start('start'),
+  turnSlightLeft('turn-slight-left'),
+  turnSharpLeft('turn-sharp-left'),
+  turnLeft('turn-left'),
+  turnSlightRight('turn-slight-right'),
+  turnSharpRight('turn-sharp-right'),
+  keepRight('keep-right'),
+  keepLeft('keep-left'),
+  uturnLeft('uturn-left'),
+  uturnRight('uturn-right'),
+  turnRight('turn-right'),
+  straight('straight'),
+  rampLeft('ramp-left'),
+  rampRight('ramp-right'),
+  merge('merge'),
+  forkLeft('fork-left'),
+  forkRight('fork-right'),
+  ferry('ferry'),
+  ferryTrain('ferry-train'),
+  roundaboutLeft('roundabout-left'),
+  roundaboutRight('roundabout-right');
 
   final String value;
-  final Side category;
 
-  const Direction(this.value, this.category);
+  const Direction(this.value);
 
   factory Direction.fromString(String directionStr) {
     if (directionStr.isEmpty) {

@@ -7,6 +7,8 @@ import 'package:route_planner/models/location.dart';
 import 'package:route_planner/models/route_model.dart';
 import 'package:route_planner/models/weather_model.dart';
 
+final networkService = NetworkService();
+
 class NetworkService {
   Future<RouteModel?> getRoutes(
     String originCity,
@@ -17,7 +19,7 @@ class NetworkService {
     try {
       final response = await http.get(
         Uri.parse(
-          '${ApiEndPoint.ROUTES}/$originCity/$destinationCity',
+          '${ApiEndPoints.ROUTES}/$originCity/$destinationCity',
         ),
         headers: headers,
       );
@@ -43,7 +45,7 @@ class NetworkService {
     try {
       final response = await http.get(
         Uri.parse(
-          '${ApiEndPoint.WEATHER}/${location.latitude}/${location.longitude}',
+          '${ApiEndPoints.WEATHER}/${location.latitude}/${location.longitude}',
         ),
         headers: headers,
       );

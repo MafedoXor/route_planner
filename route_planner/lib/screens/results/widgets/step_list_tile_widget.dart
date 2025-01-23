@@ -8,14 +8,9 @@ import 'package:route_planner/models/weather_model.dart';
 class StepListTileWidget extends StatefulWidget {
   final RouteStep step;
 
-  //uncomment to use lazy loading
-  // final WeatherModel weatherModel;
-
   const StepListTileWidget({
     super.key,
     required this.step,
-    //uncomment to use lazy loading
-    // required this.weatherModel,
   });
 
   @override
@@ -23,13 +18,18 @@ class StepListTileWidget extends StatefulWidget {
 }
 
 class _StepListTileWidgetState extends State<StepListTileWidget> {
-  //comment out to use lazy loading
-  final NetworkService _networkService = NetworkService();
-
-  //need logic to clear cache
   static final Map<String, WeatherModel> _weatherCache = {};
 
+  late final Future<WeatherModel> weatherData;
+
   WeatherModel? weatherModel;
+
+  @override
+  void initState() {
+    super.initState();
+
+    weatherData = _fetchWeather();
+  }
 
   Future<WeatherModel> _fetchWeather() async {
     final locationKey =
@@ -37,7 +37,7 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
     if (_weatherCache.containsKey(locationKey)) {
       return _weatherCache[locationKey]!;
     } else {
-      final weather = await _networkService.getWeather(widget.step.location);
+      final weather = await networkService.getWeather(widget.step.location);
       _weatherCache[locationKey] = weather;
       return weather;
     }
@@ -46,41 +46,48 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
   @override
   Widget build(BuildContext context) {
     IconData selectDirectionIcon() {
-      return widget.step.direction == null
-          ? Icons.question_mark
-          : widget.step.direction!.category == Side.start
-              ? Icons.mode_standby
-              : widget.step.direction!.category == Side.right
-                  ? Icons.arrow_forward
-                  : widget.step.direction!.category == Side.left
-                      ? Icons.arrow_back
-                      : widget.step.direction!.category == Side.straight
-                          ? Icons.arrow_upward
-                          : Icons.question_mark;
+      if (widget.step.direction == null) {
+        return Icons.question_mark;
+      }
+
+      switch (Side.fromDirection(widget.step.direction!)) {
+        case Side.start:
+          return Icons.mode_standby;
+        case Side.right:
+          return Icons.arrow_forward;
+        case Side.left:
+          return Icons.arrow_back;
+        case Side.straight:
+          return Icons.arrow_upward;
+        default:
+          return Icons.question_mark;
+      }
     }
 
     IconData selectWeatherIcon() {
-      return weatherModel!.description.weatherCategory == WeatherCategory.clear
-          ? Icons.circle_outlined
-          : weatherModel!.description.weatherCategory == WeatherCategory.rain
-              ? Icons.grain
-              : weatherModel!.description.weatherCategory ==
-                      WeatherCategory.snow
-                  ? Icons.ac_unit
-                  : weatherModel!.description.weatherCategory ==
-                          WeatherCategory.clouds
-                      ? Icons.cloud
-                      : weatherModel!.description.weatherCategory ==
-                              WeatherCategory.thunderstorm
-                          ? Icons.flash_on
-                          : weatherModel!.description.weatherCategory ==
-                                  WeatherCategory.fog
-                              ? Icons.foggy
-                              : weatherModel!.description.weatherCategory ==
-                                      WeatherCategory.sun
-                                  ? Icons.wb_sunny
-                                  : Icons.question_mark;
+      switch (WeatherCategory.fromWeatherCondition(weatherModel!.condition)) {
+        case WeatherCategory.clear:
+          return Icons.circle_outlined;
+        case WeatherCategory.rain:
+          return Icons.grain;
+        case WeatherCategory.snow:
+          return Icons.ac_unit;
+        case WeatherCategory.clouds:
+          return Icons.cloud;
+        case WeatherCategory.thunderstorm:
+          return Icons.flash_on;
+        case WeatherCategory.fog:
+          return Icons.foggy;
+        case WeatherCategory.sun:
+          return Icons.wb_sunny;
+        default:
+          return Icons.question_mark;
+      }
     }
+
+    const String latitudeText = 'Latitude: ${0}°';
+    const String longitudeText = 'Longitude: ${0}°';
+    const String errorFetchWeather = 'Error fetching weather data';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -110,35 +117,22 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 8,
                 children: [
-                  //round to 4 decimal places
                   Text(
-                    'Latitude: ${widget.step.location.latitude.toStringAsFixed(6)}°',
+                    latitudeText.replaceFirst(
+                      '${0}',
+                      widget.step.location.latitude.toStringAsFixed(6),
+                    ),
                   ),
                   Text(
-                    'Longitude: ${widget.step.location.longitude.toStringAsFixed(6)}°',
+                    longitudeText.replaceFirst(
+                      '${0}',
+                      widget.step.location.longitude.toStringAsFixed(6),
+                    ),
                   ),
                 ],
               ),
-              //uncomment to use lazy loading
-              // Column(
-              //   children: [
-              //     Icon(
-              //       selectWeatherIcon(),
-              //       color: Colors.blueGrey,
-              //     ),
-              //     SizedBox(
-              //       width: 100,
-              //       child: Text(
-              //         weatherModel!.description.value,
-              //         maxLines: 3,
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              //comment out to use lazy loading
               FutureBuilder(
-                future: _fetchWeather(),
+                future: weatherData,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SizedBox(
@@ -148,7 +142,7 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
                     );
                   } else {
                     if (snapshot.hasError) {
-                      return Text('Error fetching weather data');
+                      return Text(errorFetchWeather);
                     } else {
                       weatherModel = snapshot.data as WeatherModel;
                       return Row(
@@ -162,7 +156,7 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
                               SizedBox(
                                 width: 100,
                                 child: Text(
-                                  weatherModel!.description.value,
+                                  weatherModel!.condition.value,
                                   maxLines: 3,
                                   textAlign: TextAlign.center,
                                 ),

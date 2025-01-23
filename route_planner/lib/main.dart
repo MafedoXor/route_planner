@@ -34,26 +34,34 @@ class MyApp extends StatelessWidget {
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Colors.blueGrey),
-            foregroundColor: WidgetStatePropertyAll(Colors.white),
-            minimumSize: WidgetStatePropertyAll(
-              const Size(double.infinity, 44),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueGrey,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: Colors.grey,
+            minimumSize: const Size(double.infinity, 44),
+            side: BorderSide(
+              color: Colors.grey,
             ),
-            side: WidgetStatePropertyAll(
-              BorderSide(
-                color: Colors.grey,
-              ),
-            ),
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
         ),
-        useMaterial3: true,
       ),
+      builder: (context, child) {
+        final content = GestureDetector(
+          onTap: () {
+            final currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              currentFocus.focusedChild!.unfocus();
+            }
+          },
+          child: child,
+        );
+
+        return content;
+      },
       initialRoute: '/',
       routes: {
         '/': (BuildContext context) => const PlanRouteScreen(),
