@@ -20,6 +20,14 @@ class _PlanRouteScreenState extends State<PlanRouteScreen> {
   bool isValidationChecked = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    originController.text = 'Netanya';
+    destinationController.text = 'Herzelia';
+  }
+
+  @override
   void dispose() {
     originController.dispose();
     destinationController.dispose();
@@ -63,7 +71,6 @@ class _PlanRouteScreenState extends State<PlanRouteScreen> {
         title: const Text(title),
       ),
       body: SafeArea(
-        top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -71,13 +78,14 @@ class _PlanRouteScreenState extends State<PlanRouteScreen> {
               SizedBox(
                 height: 100,
               ),
-              FillRouteFormWidget(
-                globalKey: formKey,
-                isLoading: isLoading,
-                originController: originController,
-                destinationController: destinationController,
+              Expanded(
+                child: FillRouteFormWidget(
+                  globalKey: formKey,
+                  isLoading: isLoading,
+                  originController: originController,
+                  destinationController: destinationController,
+                ),
               ),
-              Spacer(),
               ElevatedButton(
                 onPressed: isLoading
                     ? null

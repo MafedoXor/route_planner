@@ -21,74 +21,84 @@ class _ResultsScreenState extends State<ResultsScreen> {
     const String totalDurationText = 'Total duration: ${0} hours ${1} minutes';
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: const Text(titleText),
-            pinned: true,
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    totalDistanceText.replaceFirst(
-                      '${0}',
-                      (widget.routeModel.distance / 1000).toStringAsFixed(2),
+      body: SafeArea(
+        top: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: const Text(titleText),
+              pinned: true,
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      totalDistanceText.replaceFirst(
+                        '${0}',
+                        (widget.routeModel.distance / 1000).toStringAsFixed(2),
+                      ),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                    Text(
+                      totalDurationText
+                          .replaceFirst(
+                            '${0}',
+                            (widget.routeModel.duration ~/ 3600).toString(),
+                          )
+                          .replaceFirst(
+                            '${1}',
+                            (widget.routeModel.duration % 3600 ~/ 60)
+                                .toString(),
+                          ),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  Text(
-                    totalDurationText
-                        .replaceFirst(
-                          '${0}',
-                          (widget.routeModel.duration ~/ 3600).toString(),
-                        )
-                        .replaceFirst(
-                          '${1}',
-                          (widget.routeModel.duration % 3600 ~/ 60).toString(),
-                        ),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                    Text(
+                      'Total steps: ${widget.routeModel.steps.length}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Total steps: ${widget.routeModel.steps.length}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                if (index == 0) {
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == 0) {
+                    return StepListTileWidget(
+                      key: Key(
+                        widget.routeModel.steps[index].location.toString(),
+                      ),
+                      step: RouteStep(
+                        direction: Direction.start,
+                        location: widget.routeModel.steps[index].location,
+                      ),
+                    );
+                  }
+
                   return StepListTileWidget(
-                    step: RouteStep(
-                      direction: Direction.start,
-                      location: widget.routeModel.steps[0].location,
-                    ),
+                    key:
+                        Key(widget.routeModel.steps[index].location.toString()),
+                    step: widget.routeModel.steps[index],
                   );
-                }
-                return StepListTileWidget(
-                  step: widget.routeModel.steps[index],
-                );
-              },
-              childCount: widget.routeModel.steps.length,
+                },
+                childCount: widget.routeModel.steps.length,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

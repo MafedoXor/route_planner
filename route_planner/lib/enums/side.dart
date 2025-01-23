@@ -7,7 +7,7 @@ enum Side {
   right,
   straight;
 
-  factory Side.fromDirection(Direction direction){
+  factory Side.fromDirection(Direction direction) {
     switch (direction) {
       case Direction.turnSlightLeft:
       case Direction.turnSharpLeft:

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:route_planner/api/network_service.dart';
 import 'package:route_planner/enums/side.dart';
 import 'package:route_planner/enums/weather_category.dart';
 import 'package:route_planner/models/route_step_model.dart';
 import 'package:route_planner/models/weather_model.dart';
+import 'package:route_planner/repositories/weather_repository.dart';
 
 class StepListTileWidget extends StatefulWidget {
   final RouteStep step;
@@ -18,8 +18,6 @@ class StepListTileWidget extends StatefulWidget {
 }
 
 class _StepListTileWidgetState extends State<StepListTileWidget> {
-  static final Map<String, WeatherModel> _weatherCache = {};
-
   late final Future<WeatherModel> weatherData;
 
   WeatherModel? weatherModel;
@@ -32,15 +30,7 @@ class _StepListTileWidgetState extends State<StepListTileWidget> {
   }
 
   Future<WeatherModel> _fetchWeather() async {
-    final locationKey =
-        '${widget.step.location.latitude},${widget.step.location.longitude}';
-    if (_weatherCache.containsKey(locationKey)) {
-      return _weatherCache[locationKey]!;
-    } else {
-      final weather = await networkService.getWeather(widget.step.location);
-      _weatherCache[locationKey] = weather;
-      return weather;
-    }
+    return weatherRepository.getWeather(widget.step.location);
   }
 
   @override

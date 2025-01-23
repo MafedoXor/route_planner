@@ -13,4 +13,9 @@ class Location {
       longitude: json['lng'],
     );
   }
+
+  @override
+  String toString() {
+    return 'lat: $latitude, lng: $longitude}';
+  }
 }
